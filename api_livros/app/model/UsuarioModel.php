@@ -17,7 +17,8 @@ class UsuarioModel {
         ");
         $stmt->bindValue(':email', $email);
         $stmt->bindValue(':senha', $senha);
-
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
 

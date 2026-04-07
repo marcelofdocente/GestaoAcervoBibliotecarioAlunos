@@ -2,7 +2,7 @@
 
 // configuracoes de erro
 error_reporting(E_ALL);
-ini_set('display_erros', 1);
+ini_set('display_errors', 1);
 
 // cabecalho da API:
 // definicao para retorno (API) arquivo o JSON
@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS'){
 //importacao de codigos
 require_once '../config/db.php';
 require_once '../app/controller/UsuarioController.php';
+
 
 $database = new Database();
 $db = $database->getConnection();
