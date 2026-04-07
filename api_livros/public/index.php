@@ -36,12 +36,15 @@ try {
             echo json_encode([
                 'status'=>'ok - Sistema Online!'
                 ]);
+            break;
             http_response_code(200);
         case 'login':
             if ($method === 'POST') {
                 //chamar Controller do Usuario para realizar Login
                 $usuarioController = new UsuarioController($db);
-            }       
+                $usuarioController->loginUsuario();
+            }
+            break;   
     }
 } catch (Throwable $e) {
     http_response_code(500); //Internal Server Error
