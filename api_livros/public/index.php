@@ -49,7 +49,8 @@ try {
             if ($method === 'GET') {
                 $livroController = new LivroController($db);
                 $livroController->getLivros();
-            }               
+            }
+            break;              
     }
 } catch (Throwable $e) {
     http_response_code(500); //Internal Server Error
