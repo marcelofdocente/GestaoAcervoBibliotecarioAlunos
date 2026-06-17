@@ -51,6 +51,11 @@ class LivroModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);   
     }
 
+    //[SPRINT9]
+    public function updateLivro($id, $titulo, $autor, $descricao){
+        
+    }
+
     //[SPRINT8] Implementar novo Livro
     public function createLivro($titulo, $autor, $descricao) {
         $stmt = $this->db->prepare("
