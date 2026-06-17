@@ -81,6 +81,16 @@ class LivroModel {
         };
         return false;
     }
+
+    //[SPRINT10] Implementa Excluir
+    public function deleteLivro($id){
+        $stmt = $this->db->prepare("
+            DELETE FROM Livros
+            WHERE id_livro = :id
+        ");
+        $stmt->bindValue(':id', $id);
+        return $stmt->execute();
+    }
 }
 
 ?>
