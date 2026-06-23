@@ -45,13 +45,38 @@
         }
     }
 
-    async function movimentarEstoque(id_livro, quantidade_atual, tipoMovimentacao, quantidade, data){
+    function validacaoQuantidade(quantidade, estoque){
+        if (quantidade > estoque){
+            alert("Saldo ficara negativo, nao foi possivel atualizar!");
+            return false;
+        }
+        return true;
+    }
+
+    async function postMovimentacao(movimentacao){
+        try{
+            const resposta = await fetch(`${API_BASE}/estoque`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(movimentacao)
+            });
+            const dados = await resposta.json();
+            if (!resposta.ok){
+                throw new Error(`Erro HTTP: ${resposta.status} - ${dados.message}`);
+            }
+            return dados;
+        }catch(erro){
+            throw erro;
+        }        
+    }
+
+    async function movimentarEstoque(id_livro, estoque, tipoMovimentacao, quantidade, data){
         if (!id_livro || !tipoMovimentacao || !quantidade || !data){
             alert("Todos os campos precisam estar preenchidos");
             return;
         }
         quantidade = Number(quantidade);
-        if (tipoMovimentacao == "saida" && !validacaoQuantidade(quantidade, quantidade_atual)){
+        if (tipoMovimentacao == "saida" && !validacaoQuantidade(quantidade, estoque)){
             return;
         }
 
@@ -59,11 +84,16 @@
         movimentacao = {
             id_livro: id_livro,
             id_usuario: usuario.id_usuario,
-            quantidade_atual: quantidade_atual,
+            estoque: estoque,
             tipo: tipoMovimentacao,
             quantidade: quantidade,
             data: data
         };
+
+        result = await postMovimentacao(movimentacao);
+        alert(result.message);
+        //recerregar pagina
+        location.reload();
     }
 
     function preencherTabela(dados){
@@ -96,7 +126,7 @@
             tr.appendChild(tdTitulo);
             // Quantidade Atual
             const tdQtAtual = document.createElement('td');
-            tdQtAtual.textContent = livro.quantidade_atual;
+            tdQtAtual.textContent = livro.estoque;
             tr.appendChild(tdQtAtual);
             // TIPO MOVIMENTAÇÃO
             const tdTipo = document.createElement('td');
@@ -135,7 +165,7 @@
             btnRegistrar.textContent = 'Registrar';
             btnRegistrar.classList.add('btnMovimentar');
             btnRegistrar.addEventListener('click', () => 
-                movimentarEstoque(livro.id_livro, livro.quantidade_atual, selectTipo.value, inputQuantidade.value, inputData.value)
+                movimentarEstoque(livro.id_livro, livro.estoque, selectTipo.value, inputQuantidade.value, inputData.value)
             );
             tdAcao.appendChild(btnRegistrar);
             tr.appendChild(tdAcao);

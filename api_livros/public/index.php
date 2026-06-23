@@ -9,7 +9,7 @@ ini_set('display_errors', 1);
 header('Content-Type: application/json; charset=utf-8');
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '*'; // API recebe requisicao de qualquer dominio
 header('Access-Control-Allow-Origin: ' . $origin);
-header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS'){
@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS'){
 require_once '../config/db.php';
 require_once '../app/controller/UsuarioController.php';
 require_once '../app/controller/LivroController.php';
+//[Sprint 11] Implementa Gestao de Estoque
+require_once '../app/controller/EstoqueController.php';
 
 $database = new Database();
 $db = $database->getConnection();
@@ -31,6 +33,9 @@ $route = basename($path); //captura a rota (/login)
 $method = $_SERVER['REQUEST_METHOD']; //captura metodo HTTP (POST)
 
 $livroController = new LivroController($db);
+
+//[Sprint 11] Implementa Gestao de Estoque
+$estoqueController = new EstoqueController($db);
 
 try {
     switch ($route) {
@@ -95,6 +100,18 @@ try {
             if ($method === 'GET'){
                 //$livroController = new LivroController($db);
                 $livroController->getLivrosPeloId();
+                exit;
+            }
+            http_response_code(405); //nao reconhece o metodo
+            echo json_encode([
+                'error' => "Método não permitido!"
+            ]);
+            break;
+        
+        //[Sprint 11] Implementa Gestao de Estoque
+        case 'estoque':
+            if ($method === 'PUT'){
+                $estoqueController->atualizarSaldo();
                 exit;
             }
             http_response_code(405); //nao reconhece o metodo
